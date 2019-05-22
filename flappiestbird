@@ -1,0 +1,111 @@
+
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import java.util.List;
+import java.util.Vector;
+//import java.util.GifImage;
+
+public class fishhead1 extends SmoothMover
+{
+    // constants
+    private static final double GRAVITY = 5.8;
+    private static final Color defaultColor = new Color(255, 216, 0);
+    
+    // fields
+    private double mass;
+    Vector velocity = new Vector (0, 0);
+    //private GreenfootImage image1;
+    private int x;
+    private GifImage gifImage;
+    private int counter;
+    //public Vector velocity = 0; 
+    /**
+     * Construct a Body with default size, mass, velocity.
+     */
+    public fishhead1()
+    {
+        //this (20, 300, new Vector(0, 1.0));
+        this.mass = 300;
+        addToVelocity(new Vector (0, 1.0));
+        //GifImage gifImage = new GifImage (flappiest.gif);
+        gifImage = new GifImage (flappiest.gif);
+    }
+    
+    /**
+     * Construct a Body with a specified size, mass, velocity and color.
+     */
+    public fishhead1(int size, double mass, Vector velocity)
+    {
+        this.mass = mass;
+        addToVelocity(velocity);
+        //GreenfootImage image = new GreenfootImage (size, size);
+         //GifImage gifImage = new GifImage (flappiest.gif);
+          gifImage = new GifImage (flappiest.gif);
+    }
+       
+    public void act() 
+    {
+        applyForces();
+        checkKeyPress();
+        setImage(gifImage.getCurrentImage());
+        move(5); 
+        translocate();
+    }
+    public void checkKeyPress()
+    {
+        if(Greenfoot.isKeyDown("left"))
+        {
+            turn(-6);
+        }
+        if(Greenfoot.isKeyDown("right"))
+        {
+            turn(6);
+        }
+    }   
+    private void applyForces()
+    {
+        List<fishhead1> bodies = getWorld().getObjects(fishhead1.class);
+        for (fishhead1 fishhead1 : bodies)
+        {
+            if (fishhead1 != this)
+            {
+                applyGravity (fishhead1);
+            }
+    }
+    }
+    
+    private void applyGravity(fishhead1 other)
+    {
+        double dx = other.getExactX() - this.getExactX();
+        double dy = other.getExactY() - this.getExactY();
+        Vector force = new Vector (dx, dy);
+        double distance = Math.sqrt (dx * dx + dy * dy);
+        double strength = GRAVITY * this.mass * other.mass /(distance * distance);
+        double acceleration = strength / this.mass;
+        force.setLength (acceleration);
+        addToVelocity(force);
+    }
+    /**
+     * Modify velocity by adding another velocity vector.
+     */
+    public void addToVelocity(Vector boost) 
+    {
+        velocity.add(boost);
+    }
+    
+    private void translocate()
+    {
+        if (getX() == 0 || getX() == getWorld().getWidth()-1) {
+            setLocation(-1*(double)getX(),-1* (double)getY()); 
+            
+        }
+        else if (getY() == 0 || getY() == getWorld().getHeight()-1) {
+            setLocation((double)getX(), (double)getY()); 
+        }
+        
+    }
+    public double getMass()
+    {
+        return mass;
+    }
+}
+ 
